@@ -11,12 +11,41 @@
       integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h"
       crossorigin="anonymous"
     ></script>
+ <script defer>
+      htmx.defineExtension('renderProp', {
+        onEvent: function(info, e){
+          if (info === 'htmx:afterRequest'){
+            var target = e.detail.target;
+            console.log(info);
+            var res =JSON.parse(e.detail.xhr.response);
+            const arrPos=+(e.target.attributes.propName.value.charAt(e.target.attributes.propName.value.indexOf("[")+1))
+            const splited=e.target.attributes.propName.value.split(".")
+            const prop=!arrPos?res.results[arrPos][splited[1]][splited[2]]:""
+      //  var prop =res.results[0].name.first;
+//var prop = res[0]["e.target.attributes.propName.value"]
+            target.innerHTML = prop;
+            console.log(prop)
+          }
+        }
+      })
+    </script>
+
   </head>
   <body>
-    <h2>helloa!</h2>
-    <div hx-get="https://randomuser.me/api/">""</div>
+    <h2>hello Go htmx</h2>
+    <button
+      hx-get="https://randomuser.me/api/"
+      hx-target="#a"
+      hx-ext="renderProp"
+      propName="results[0].name.first"
+    >
+      Get random name
+    </button>
+    <div id="a">---</div>
+
+
     {{range .Albums}}
     <p>{{ .Band}} - {{ .Name}}</p>
     {{end}}
-  </body>
+     </body>
 </html>
