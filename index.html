@@ -16,16 +16,27 @@
         onEvent: function(info, e){
           if (info === 'htmx:afterRequest'){
             var target = e.detail.target;
-            console.log(info);
 
             var res =JSON.parse(e.detail.xhr.response);
-            
-//building a parser for propName and object
+            console.log(res)
             const arrPos=+(e.target.attributes.propName.value.charAt(e.target.attributes.propName.value.indexOf("[")+1))
+          
+            let prop;
+
             const splited=e.target.attributes.propName.value.split(".")
-            const prop=!arrPos?res.results[arrPos][splited[1]][splited[2]]:""
-      //  var prop =res.results[0].name.first;
-//var prop = res[0]["e.target.attributes.propName.value"]
+  
+            if (!isNaN(arrPos)){
+              const firstProp = e.target.attributes.propName.value.split("[")[0]
+              prop = res[firstProp][arrPos]
+              splited.shift()
+            } else {
+                prop = res
+              }
+                
+            for (let i = 0; i < splited.length; i++){
+                    prop = prop[splited[i]]
+              }
+      
             target.innerHTML = prop;
             console.log(prop)
           }
@@ -44,8 +55,8 @@
     >
       Get random name
     </button>
-    <div id="a">---</div>
-
+  <div id="a">---</div>
+  <div hx-get="https://randomuser.me/api/" hx-ext="renderProp" propName="info.seed">get seed id</div>
 
     {{range .Albums}}
     <p>{{ .Band}} - {{ .Name}}</p>
