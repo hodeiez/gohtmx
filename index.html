@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
@@ -11,39 +12,7 @@
       integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h"
       crossorigin="anonymous"
     ></script>
- <script defer>
-      htmx.defineExtension('renderProp', {
-        onEvent: function(info, e){
-          if (info === 'htmx:afterRequest'){
-            var target = e.detail.target;
-
-            var res =JSON.parse(e.detail.xhr.response);
-            console.log(res)
-            const arrPos=+(e.target.attributes.propName.value.charAt(e.target.attributes.propName.value.indexOf("[")+1))
-          
-            let prop;
-
-            const splited=e.target.attributes.propName.value.split(".")
-  
-            if (!isNaN(arrPos)){
-              const firstProp = e.target.attributes.propName.value.split("[")[0]
-              prop = res[firstProp][arrPos]
-              splited.shift()
-            } else {
-                prop = res
-              }
-                
-            for (let i = 0; i < splited.length; i++){
-                    prop = prop[splited[i]]
-              }
-      
-            target.innerHTML = prop;
-            console.log(prop)
-          }
-        }
-      })
-    </script>
-
+    <script src="js/myextensions.js"></script>
   </head>
   <body>
     <h2>hello Go htmx</h2>
@@ -55,11 +24,17 @@
     >
       Get random name
     </button>
-  <div id="a">---</div>
-  <div hx-get="https://randomuser.me/api/" hx-ext="renderProp" propName="info.seed">get seed id</div>
+    <div id="a">---</div>
+    <div
+      hx-get="https://randomuser.me/api/"
+      hx-ext="renderProp"
+      propName="info.seed"
+    >
+      get seed id
+    </div>
 
     {{range .Albums}}
     <p>{{ .Band}} - {{ .Name}}</p>
     {{end}}
-     </body>
+  </body>
 </html>
